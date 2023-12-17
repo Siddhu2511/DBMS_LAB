@@ -27,24 +27,6 @@ END;
 
 
 
-//exception
-DECLARE  
-   c_id customers.id%type := 8;  
-   c_name  customers.name%type;  
-   c_addr customers.address%type;  
-BEGIN  
-   SELECT  name, address INTO  c_name, c_addr  
-   FROM customers  
-   WHERE id = c_id;  
-DBMS_OUTPUT.PUT_LINE ('Name: '||  c_name);  
- DBMS_OUTPUT.PUT_LINE ('Address: ' || c_addr);  
-EXCEPTION  
-   WHEN no_data_found THEN  
-      dbms_output.put_line('No such customer!');  
-   WHEN others THEN  
-      dbms_output.put_line('Error!');  
-END;  
-/   
 
 //implicit cursor
 DECLARE   
@@ -77,5 +59,36 @@ BEGIN
       dbms_output.put_line(c_id || ' ' || c_name || ' ' || c_addr);  
    END LOOP;  
    CLOSE c_customers;  
+END;  
+/  
+
+
+//trigger
+CREATE OR REPLACE TRIGGER display_salary_changes  
+BEFORE DELETE OR INSERT OR UPDATE ON customers  
+FOR EACH ROW  
+WHEN (NEW.ID > 0)  
+DECLARE  
+   sal_diff number;  
+BEGIN  
+   sal_diff := :NEW.salary  - :OLD.salary;  
+   dbms_output.put_line('Old salary: ' || :OLD.salary);  
+   dbms_output.put_line('New salary: ' || :NEW.salary);  
+   dbms_output.put_line('Salary difference: ' || sal_diff);  
+END;  
+/  
+
+//check trigger
+DECLARE   
+   total_rows number(2);  
+BEGIN  
+   UPDATE  customers  
+   SET salary = salary + 5000;  
+   IF sql%notfound THEN  
+      dbms_output.put_line('no customers updated');  
+   ELSIF sql%found THEN  
+      total_rows := sql%rowcount;  
+      dbms_output.put_line( total_rows || ' customers updated ');  
+   END IF;   
 END;  
 /  
