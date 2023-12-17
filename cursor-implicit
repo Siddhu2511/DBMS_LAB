@@ -1,0 +1,37 @@
+Q.18) STUDENT(ROLL-NO, NAME, DATE-OF-BIRTH, COURSE-ID)
+COURSE (COURSE-ID, NAME, FEE, DURATION, STATUS)
+(A) WRITE PL/SQL PROCEDURE TO DO THE FOLLOWING :
+SET THE STATUS OF COURSE TO "NOT OFFERED" IN WHICH THE
+NUMBER OF CANDIDATES IS
+LESS THAN 5.
+SOLUTION:
+create table student (
+roll_no number(5) NOT NULL,
+name varchar2(20) NOT NULL,
+dob date,
+course_id varchar2(5) PRIMARY KEY
+);
+insert into student values (101,'ADAM','24-OCT-1988','MCS');
+insert into student values (102,'JAMES','06-JAN-1985','MTC');
+insert into student values (102,'CHARLES','17-APR-1987','MCA');
+ create table course (
+ course_id varchar2(5) references student(course_id),
+ name varchar2(40),
+ duration number(2),
+ fee float(10),
+status varchar2(20)
+);
+insert into course values ('MCS','M.Sc.-CS',2,40000,null);
+insert into course values ('MTC','M.Tech.-CS',2,120000,null);
+insert into course values ('MCA','M.C.A',3,100000,null);
+declare
+v_status course.status%type:='Not Offered';
+cursor c19 is
+select course_id,count(*) from Student
+Group by course_id
+having count(*)<5;
+begin
+for i in c19 loop
+update course set status=v_status;
+end loop;
+end;

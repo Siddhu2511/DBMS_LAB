@@ -1,0 +1,23 @@
+drop table employ;
+CREATE TABLE employ (name varchar(20),district varchar(20),rank int);
+
+DECLARE
+    CURSOR cur IS
+      SELECT name,rank,district
+      FROM   student e,
+             student_rank d
+      WHERE  d.roll_no = e.roll_no;
+    v cur%ROWTYPE;
+BEGIN
+    OPEN cur;
+    LOOP
+        FETCH cur INTO v;
+        exit WHEN cur%NOTFOUND;
+       if(v.rank<=100) then
+  insert into employ values(v.name,v.district,v.rank);
+ 
+end if;
+    END LOOP;
+    CLOSE cur;
+END; 
+ /
