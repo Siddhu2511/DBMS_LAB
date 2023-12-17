@@ -1,0 +1,81 @@
+//functions
+DECLARE  
+   a number;  
+   b number;  
+   c number;  
+FUNCTION findMax(x IN number, y IN number)   
+RETURN number  
+IS  
+    z number;  
+BEGIN  
+   IF x > y THEN  
+      z:= x;  
+   ELSE  
+      Z:= y;  
+   END IF;  
+  
+   RETURN z;  
+END;   
+BEGIN  
+   a:= 23;  
+   b:= 45;  
+  
+   c := findMax(a, b);  
+   dbms_output.put_line(' Maximum of (23,45): ' || c);  
+END;  
+/  
+
+
+
+//exception
+DECLARE  
+   c_id customers.id%type := 8;  
+   c_name  customers.name%type;  
+   c_addr customers.address%type;  
+BEGIN  
+   SELECT  name, address INTO  c_name, c_addr  
+   FROM customers  
+   WHERE id = c_id;  
+DBMS_OUTPUT.PUT_LINE ('Name: '||  c_name);  
+ DBMS_OUTPUT.PUT_LINE ('Address: ' || c_addr);  
+EXCEPTION  
+   WHEN no_data_found THEN  
+      dbms_output.put_line('No such customer!');  
+   WHEN others THEN  
+      dbms_output.put_line('Error!');  
+END;  
+/   
+
+//implicit cursor
+DECLARE   
+   total_rows number(2);  
+BEGIN  
+   UPDATE  customers  
+   SET salary = salary + 5000;  
+   IF sql%notfound THEN  
+      dbms_output.put_line('no customers updated');  
+   ELSIF sql%found THEN  
+      total_rows := sql%rowcount;  
+      dbms_output.put_line( total_rows || ' customers updated ');  
+   END IF;   
+END;  
+/  
+
+
+//explicit cursor
+DECLARE  
+   c_id customers.id%type;  
+   c_name customers.name%type;  
+   c_addr customers.address%type;  
+   CURSOR c_customers is  
+      SELECT id, name, address FROM customers;  
+BEGIN  
+   OPEN c_customers;  
+   LOOP  
+      FETCH c_customers into c_id, c_name, c_addr;  
+      EXIT WHEN c_customers%notfound;  
+      dbms_output.put_line(c_id || ' ' || c_name || ' ' || c_addr);  
+   END LOOP;  
+   CLOSE c_customers;  
+END;  
+/  
