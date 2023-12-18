@@ -44,32 +44,6 @@ END;
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 //implicit cursor
 DECLARE   
    total_rows number(2);  
